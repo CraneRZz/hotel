@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd ">
+
+<!-- SpringMVC使用注解 -->
+ 	<mvc:annotation-driven>
+<!--  	支持json -->
+  		<mvc:message-converters>
+  			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+  				<property name="supportedMediaTypes">
+  					<list>
+  						<value>application/json;charset=utf-8</value>
+  					</list>
+  				</property>
+ 			</bean>
+  		</mvc:message-converters>
+ 	</mvc:annotation-driven>
+
+<!-- 扫包 -->
+	<context:component-scan base-package="controller"></context:component-scan>
+	<context:component-scan base-package="exceptionhandler"></context:component-scan>
+
+
+	
+<!-- ViewResolver -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<!-- view -->
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>	
+		<property name="prefix" value="/jsp/"></property>
+		<!--<property name="prefix" value="/WEB-INF/jsp/"></property>  -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+<!-- ViewController -->
+<!--首页 -->
+<!-- 页面重定向，不带有数据返回 -->
+ 	<mvc:view-controller path="/" view-name="index"/>
+ 	<mvc:view-controller path="/showRegist" view-name="register-1"/>
+ 	<mvc:view-controller path="/registSuccess" view-name="register-2"/>
+ 	<mvc:view-controller path="/showLogin" view-name="login"/>
+ 	<mvc:view-controller path="/category/showCategory" view-name="roomPrice"/>
+ 	<mvc:view-controller path="/member/editMember" view-name="editMember"/>
+ 	<mvc:view-controller path="/member/editPassword" view-name="editPassword"/>
+ 	<mvc:view-controller path="/create/showSubscriptionDtl" view-name="subscriptionDetail"/>
+ 	<mvc:view-controller path="/create1/createSubscription1" view-name="createSubscriptionDtl-1"/>
+ 	<mvc:view-controller path="/create/createSubscription2" view-name="createSubscriptionDtl-2"/>
+ 	<mvc:view-controller path="/create1/createSubscription3" view-name="createSubscriptionDtl-3"/>
+ 	<mvc:view-controller path="/subscription/newSubscription" view-name="newSubscription"/>
+ 	<mvc:view-controller path="/subscription/historySubscription" view-name="historySubscription"/>
+ 	<mvc:view-controller path="/showmanager/login" view-name="/manager/login"/>
+ 	<mvc:view-controller path="/manager/Detail" view-name="/manager/subscriptionDetail"/>
+ 	<mvc:view-controller path="/manager/List" view-name="/manager/subscriptionList"/>
+ 	<mvc:view-controller path="/manager/Query" view-name="/manager/subscriptionQuery"/>
+
+<!-- 访问静态资源 -->
+ 	<mvc:resources location="/js/" mapping="/js/**"></mvc:resources>
+ 	<mvc:resources location="/images/" mapping="/images/**"></mvc:resources>
+ 	<mvc:resources location="/style/" mapping="/style/**"></mvc:resources>
+
+<!-- 国际化 -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:resource"></property>
+	</bean>
+
+<!-- FileUpload -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+	</bean>
+
+
+</beans>

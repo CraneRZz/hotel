@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.CategoryMapper">
+<!-- 定义数据返回映射 -->
+	<resultMap id="BaseResultMap" type="entity.Category">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="bedprice" property="bedprice" jdbcType="FLOAT" />
+		<result column="roomprice" property="roomprice" jdbcType="FLOAT" />
+	</resultMap>
+	<!-- 数据库查询语句，id是接口方法名 -->
+	<!-- 查询所有的房间种类数据
+	方法接口为：selectAllCategory
+	输入类型为：entity.Category
+	结果集为：BaseResultMap -->
+	<select id="selectAllCategory"  parameterType="entity.Category" resultMap="BaseResultMap">
+		select * from category
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

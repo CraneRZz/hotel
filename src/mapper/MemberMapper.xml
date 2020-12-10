@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.MemberMapper">
+	<resultMap id="BaseResultMap" type="entity.Member">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="pwd" property="pwd" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="regtime" property="regtime" jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="AllResultMap" type="entity.Member">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<collection property="subscription" ofType="entity.Subscription" >
+			<result column="sno" property="no" jdbcType="VARCHAR" />
+			<result column="linkman" property="linkman" jdbcType="VARCHAR" />
+			<result column="email" property="email" jdbcType="VARCHAR" />
+			<result column="phone" property="phone" jdbcType="VARCHAR" />
+			<result column="status" property="status" jdbcType="VARCHAR" />
+			<result column="cretime" property="cretime" jdbcType="DATE" />	
+		<collection property="subscriptionDtl" ofType="entity.CreateSubscriptionDtl" >
+			<result column="sdate" property="sdate" jdbcType="DATE" />
+			<result column="edate" property="edate" jdbcType="DATE" />
+			<result column="residetype" property="residetype" jdbcType="INTEGER" />
+			<result column="price" property="price" jdbcType="FLOAT" />
+		<association property="room" javaType="entity.Room">
+			<result column="rno" property="no" jdbcType="VARCHAR" />
+		</association>
+		<association property="category" javaType="entity.Category">
+			<result column="name" property="name" jdbcType="VARCHAR" />
+			<result column="roomprice" property="roomprice" jdbcType="FLOAT" />
+		</association>
+		</collection>
+		</collection>
+	</resultMap>
+
+	<!-- 查询用户的订单where m.id = s.mid and d.rid = r.id and d.sid = s.id and r.id = cid-->
+	<select id="selectALL"  resultMap="AllResultMap">
+	select m.id as id,m.username as username,s.no as sno,s.linkman as linkman,s.email as email,s.phone as phone,s.status,s.cretime,
+			d.sdate,d.edate,d.residetype,d.price,r.no as rno,c.name,c.roomprice 
+			from member m,subscription s,subscription_dtl d,room r,category c 
+			<where>
+			<if test="cid != 4">
+				and r.cid = #{cid}
+			</if>
+			<if test="status != 3">
+				and s.status = #{status}
+			</if>
+			<if test="sdate != null">
+				and d.sdate = #{sdate}
+			</if>
+			<if test="edate != null">
+				and d.edate = #{edate}
+			</if>
+			<if test="sno != null">
+				and s.no = #{sno}
+			</if>
+
+			<if test="username != null">
+				and m.username = #{username}
+			</if>
+				and m.id = s.mid and d.rid = r.id and d.sid = s.id and r.id = cid
+			</where>
+	</select>
+	<sql id="Base_Column_List">
+		id, username, pwd, name, email, phone, regtime
+	</sql>
+	<!-- 用户查询 -->
+	<select id="selectByUsername" parameterType="string" resultType="entity.Member">
+		select * from member 
+		where username=#{username}
+	</select>
+	<!-- 用户注册 -->
+	<insert id="insert" parameterType="entity.Member">
+		insert into member
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				username,
+				pwd,
+			<if test="name != null">
+				name,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			regtime,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{username,jdbcType=VARCHAR},
+				#{pwd,jdbcType=VARCHAR},
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			now(),
+		</trim>
+	</insert>
+	<!-- 用户登录查询密码比对 -->
+	<select id="selectByUsernameAndPassword" resultType="entity.Member">
+		select <include refid="Base_Column_List"/>
+		from member
+		where username=#{0}
+		and pwd=#{1}
+	</select>
+	<!-- 定义密码修改方法 -->
+	<update id="update" parameterType="entity.Member">
+		update member
+		<set>
+			<if test="pwd != null">
+				pwd = #{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

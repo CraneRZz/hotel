@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.SubscriptionMapper">
+	<resultMap id="BaseResultMap" type="entity.Subscription">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="mid" property="mid" jdbcType="INTEGER" />
+		<result column="no" property="no" jdbcType="VARCHAR" />
+		<result column="linkman" property="linkman" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="cretime" property="cretime" jdbcType="DATE" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 定义重复代码块，并用include导入 -->
+	<sql id="Base_Column_List">
+		id, mid, no, linkman, email, phone, status, cretime, remark
+	</sql>
+	<!-- 插入一个新订单 -->
+	<insert id="insert" parameterType="entity.Subscription">
+		insert into subscription
+		(mid, no, linkman, email, phone, status, cretime)
+		values
+		(#{mid,jdbcType=INTEGER}, #{no,jdbcType=VARCHAR},
+		#{linkman,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		now())
+	</insert>
+	<!-- 查找没有被确认的订单 -->
+	<select id="selectStatusUnconfirmed"
+		resultType="entity.Subscription">
+		select
+		<include refid="Base_Column_List" />
+		from subscription
+		where mid=#{0}
+		and status=#{1}
+	</select>
+
+	<!-- 通过订单id查找预定 -->
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultType="entity.Subscription">
+		select
+		<include refid="Base_Column_List" />
+		from subscription
+		where id=#{id}
+	</select>
+
+	<!-- 查找所有订单信息 <if test="1 != 3"> and s.status = #{1} </if> <if test="2 != 
+		null"> and d.sdate = #{2} </if> <if test="3 != null"> and d.edate = #{3} 
+		</if> <if test="4 != null"> and s.no = #{4} </if> <if test="5 != null"> and 
+		m.username = #{5} </if> <if test="sdate != null"> and d.sdate = #{sdate,jdbcType=DATE} 
+		</if> <if test="edate != null"> and d.edate = #{edate,jdbcType=DATE} </if> 
+		<if test="sno != null"> and s.no = #{sno,jdbcType=VARCHAR} </if> -->
+	<select id="selectAllByCondition" resultMap="BaseResultMap">
+		select
+		s.id,s.mid,s.no,s.linkman,s.email,s.phone,s.status,s.cretime,s.remark
+		from member m,subscription s,subscription_dtl d,room r,category c
+		where m.id = s.mid and d.rid = r.id and d.sid = s.id
+		<if test="cid == 4">
+			and r.cid=c.id
+		</if>
+		<if test="username != null">
+			and m.username = #{username,jdbcType=VARCHAR}
+		</if>
+		<if test="cid != 4">
+			and r.cid = #{cid,jdbcType=VARCHAR}
+		</if>
+		<if test="status != 3">
+			and s.status = #{status,jdbcType=VARCHAR}
+		</if>
+		<if test="sdate != null">
+			and d.sdate = #{sdate,jdbcType=DATE}
+		</if>
+		<if test="edate != null">
+			and d.edate = #{edate,jdbcType=DATE}
+		</if>
+
+		<if test="sno != null">
+			and s.no = #{sno,jdbcType=VARCHAR}
+		</if>
+
+		GROUP BY s.id
+	</select>
+	<!-- and subscription_dtl.sid = #{id} -->
+	<delete id="delById" parameterType="java.lang.Integer">
+		DELETE FROM subscription,subscription_dtl USING subscription  INNER JOIN subscription_dtl
+ 		ON subscription.id=subscription_dtl.sid
+		<where>
+			subscription.id = #{id} 
+		</where>
+	</delete>
+	<!-- set标签不会更改其他的值 -->
+	<update id="update" parameterType="entity.Subscription">
+		update subscription
+		<set>
+			<if test="linkman != null">
+				linkman = #{linkman,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			cretime=now(),
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 管理员更新信息 -->
+	<update id="updateStatus" parameterType="entity.Subscription">
+		update subscription
+		<set>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			cretime=now(),
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询历史订单 -->
+	<select id="selectHistorySubscription"
+		resultType="entity.Subscription">
+		select
+		<include refid="Base_Column_List" />
+		from subscription
+		where mid=#{0}
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

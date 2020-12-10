@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.CreateSubscriptionDtlMapper">
+<!--指定主键列的封装规则
+	
+	column：指定哪一列
+	property：指定对应的javaBean属性
+-->
+<!-- 设置自定义结果集 -->
+	<resultMap id="BaseResultMap" type="entity.CreateSubscriptionDtl">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="rid" property="rid" jdbcType="INTEGER" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="sdate" property="sdate" jdbcType="DATE" />
+		<result column="edate" property="edate" jdbcType="DATE" />
+		<result column="residetype" property="residetype" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="FLOAT" />
+	</resultMap>
+	<!-- 定义重复代码块，并用include导入private Integer id;
+	private Integer id;
+	private Integer rid;
+	private Integer sid;
+	private Date sdate;
+	private Date edate;
+	private Integer residetype;
+	private Float price; -->
+	<sql id="Base_Column_List">
+		id, rid, sid, sdate, edate, residetype, price
+	</sql>
+	<!-- 新增客房预定的信息插入 -->
+	<insert id="insert" parameterType="entity.CreateSubscriptionDtl">
+		insert into subscription_dtl 
+		( rid, sid, sdate, edate, residetype, price)
+		values 
+		(#{rid,jdbcType=INTEGER}, #{sid,jdbcType=INTEGER},
+		#{sdate,jdbcType=DATE},#{edate,jdbcType=DATE},
+		#{residetype,jdbcType=INTEGER}, 
+		#{price,jdbcType=FLOAT})
+	</insert>
+	<select id="selectAllSubscriptionDtl"  parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from subscription_dtl where sid=#{id}
+	</select>
+	
+	    <!--删除一条记录
+    <delete id="delSubscriptionDtl" parameterType="java.lang.Integer" >
+     delete from Dept where id=#{id}
+    </delete>-->
+    
+    <!-- 删除预定记录 -->
+    <delete id="delById" parameterType="java.lang.Integer">
+		delete from subscription_dtl
+		where subscription_dtl.id = #{id}
+	</delete>
+	
+	
+  
+
+</mapper>
